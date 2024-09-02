@@ -7,14 +7,16 @@ from sklearn.metrics import root_mean_squared_error, mean_absolute_percentage_er
 data_path = './DatosF.csv'
 df = pd.read_csv(data_path)
 
-df['Demanda'] = df['Generación Nacional'] + df["Importación"] - df["Exportación"]
-df.drop(['Generación Nacional', 'Importación', 'Exportación'], axis='columns', inplace=True)
+df['Demanda'] = df['Generación Nacional'] + \
+    df["Importación"] - df["Exportación"]
+df.drop(['Generación Nacional', 'Importación', 'Exportación'],
+        axis='columns', inplace=True)
 df["Fecha"] = pd.to_datetime(df["Fecha"], dayfirst=True)
 df["Día"] = df["Fecha"].dt.dayofweek
 df["Demanda Previa"] = df["Demanda"].shift(1)
 
 # Son un montón de variables, según Valdez, 2016 (Grande UT)
-dias = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom']
+dias = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab']
 horas = range(0, 23)
 for idx, dia in enumerate(dias):
     df[dia] = df['Día'].apply(lambda d: 1 if d == idx else 0)
@@ -22,7 +24,8 @@ for hora in horas:
     df[f'Hora {hora}'] = df['Hora'].apply(lambda h: 1 if h == hora else 0)
 # Subset para la regresión y evaluación del modelo
 cutoff_date = datetime.datetime(2017, 12, 17)
-training_df = pd.DataFrame(df[(df["Fecha"] < cutoff_date) & (df["Demanda Previa"].notna())])
+training_df = pd.DataFrame(
+    df[(df["Fecha"] < cutoff_date) & (df["Demanda Previa"].notna())])
 testing_df = pd.DataFrame(df[df['Fecha'] >= cutoff_date])
 
 y_train = training_df['Demanda']
@@ -43,11 +46,13 @@ def predict_with_MLR(y, X, new_X):
     M.fit(X, y)
     return M, M.predict(new_X)
 
+
 models = {}
 predictions = {}
 
 for key in columns.keys():
-    models[key], predictions[key] = predict_with_MLR(y_train, X_train[key], X_test[key])
+    models[key], predictions[key] = predict_with_MLR(
+        y_train, X_train[key], X_test[key])
     testing_df[f'Pred. {key}'] = predictions[key]
 
 r_squared = {}
@@ -61,6 +66,7 @@ for key, model in models.items():
     rmse[key] = root_mean_squared_error(y_real, predictions[key])
     mape[key] = mean_absolute_percentage_error(y_real, predictions[key])
     coefficients[key] = pd.DataFrame(zip(X_test[key], model.coef_))
+    print(model.intercept_)
 
 # print(r_squared, rmse, mape)
 print(coefficients)
@@ -72,7 +78,8 @@ print(coefficients)
 # x_values = df_pred['Hora']
 # indices = df_pred['Hora'].index
 
-testing_df[['Fecha','Hora', 'Demanda', 'Pred. M1', 'Pred. M2', 'Pred. M3']].to_csv('output.csv', index=False)
+testing_df[['Fecha', 'Hora', 'Demanda', 'Pred. M1',
+            'Pred. M2', 'Pred. M3']].to_csv('output.csv', index=False)
 
 # fig, ax = plt.subplots()
 # ax.set_ylabel("Demanda (MW)")
