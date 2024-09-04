@@ -19,7 +19,7 @@ colors = [
     '#00a181',
 ]
 
-df = pd.read_csv('output.csv', parse_dates=['Fecha'])
+df = pd.read_csv('output_2.csv', parse_dates=['Fecha'])
 
 model_names = ['M1', 'M2', 'M3']
 for model in model_names:
@@ -48,7 +48,7 @@ with right_column:
 with left_column:
     st.write('Error Porcentual de Predicción')
     st.bar_chart(df_specific_day, x='Hora', y=[
-                 'Error M1', 'Error M2', 'Error M3'], color=colors[1:4], y_label='%')
+                 'Error M1', 'Error M2', 'Error M3'], stack="layered", color=colors[1:4], y_label='%')
 
 st.write("Métricas Globales")
 global_metrics_dict = {name: metrics(
