@@ -84,8 +84,9 @@ for key, model in models.items():
     r_squared[key] = r2_score(y_real, predictions[key])
     rmse[key] = root_mean_squared_error(y_real, predictions[key])
     mape[key] = mean_absolute_percentage_error(y_real, predictions[key])
-    coefficients[key] = pd.DataFrame(zip(X_test[key], model.coef_))
+    coefficients[key] = pd.DataFrame(zip(X_train[key], model.coef_))
     # print(model.intercept_)
+print(coefficients)
 
 # For plotting
 
