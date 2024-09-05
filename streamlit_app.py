@@ -19,7 +19,13 @@ colors = [
     '#00a181',
 ]
 
-df = pd.read_csv('output_2.csv', parse_dates=['Fecha'])
+source_choice = st.selectbox(
+    "Origen de los datos",
+    ("Actuales", "Sesgados"),
+)
+
+data_source = "output.csv" if source_choice == "Actuales" else "output_biased.csv"
+df = pd.read_csv(data_source, parse_dates=['Fecha'])
 
 model_names = ['M1', 'M2', 'M3']
 for model in model_names:
