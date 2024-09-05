@@ -79,7 +79,7 @@ print(coefficients)
 # indices = df_pred['Hora'].index
 
 testing_df[['Fecha', 'Hora', 'Demanda', 'Pred. M1',
-            'Pred. M2', 'Pred. M3']].to_csv('output.csv', index=False)
+            'Pred. M2', 'Pred. M3']].to_csv('output_biased.csv', index=False)
 
 # fig, ax = plt.subplots()
 # ax.set_ylabel("Demanda (MW)")
